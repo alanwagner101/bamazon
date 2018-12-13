@@ -36,7 +36,7 @@ function managerView() {
             } else if (res.choice == "Add to Inventory") {
                 addInventory();
             } else if (res.choice == "Exit Application") {
-                exit()
+                connection.end();
             }else {
                 addProducts()
             };
@@ -165,7 +165,3 @@ function addProducts() {
     });
 
 };
-
-function exit() {
-    connection.end();
-}

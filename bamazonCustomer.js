@@ -63,6 +63,7 @@ function buyItem(itemNumber, stock, price) {
     var itemNumber = itemNumber;
     var stock = stock;
     var price = price;
+    var sale;
 
     inquirer
         .prompt([
@@ -74,6 +75,7 @@ function buyItem(itemNumber, stock, price) {
         ]).then(function (res) {
             var amount = res.buy;
             if ((stock - amount) >= 0) {
+                sale = price * amount;
                 var newStock = stock - amount;
                 connection.query("UPDATE products SET ? WHERE ?", [{
                     stock_quantity: newStock
@@ -83,10 +85,10 @@ function buyItem(itemNumber, stock, price) {
                 }], function(err) {
                     if (err) throw err;
                     console.log("------------------------------------------------------------------------");
-                    console.log("The total amount was $" + (price * amount))
+                    console.log("The total amount was $" + sale)
                     console.log("Your Order has been placed! Please wait 3 - 4 business days for arrival!");
                     console.log("------------------------------------------------------------------------");
-                    connection.end();
+                    productSales(itemNumber, sale);
                 });
             } else {
                 console.log("------------------------------------------------------------------------");
@@ -97,4 +99,19 @@ function buyItem(itemNumber, stock, price) {
                 return false;
             };
         });
+};
+
+function productSales(itemNumber, sale) {
+    var itemNumber = itemNumber;
+    var sale = sale;
+
+    connection.query("UPDATE products SET ? WHERE ?", [{
+        product_sales: sale
+    }, 
+    {
+        id: itemNumber
+    }], function(err) {
+        if (err) throw err;
+        connection.end();
+    });
 };
