@@ -42,11 +42,24 @@ function supervisorView() {
 function viewSales() {
 
     connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_cost, " + 
-    "products.product_sales FROM departments INNER JOIN products ON departments.department_name " + 
+    "SUM (products.product_sales) AS total FROM departments INNER JOIN products ON departments.department_name " + 
     "= products.department_name WHERE departments.department_name = products.department_name GROUP BY products.department_name", 
     function(err, res) {
         if (err) throw err;
-        console.log(res);
+
+        for (var i = 0; i < res.length; i++) {
+            var total = res[i].total;
+            if (total == null) {
+                total = 0;
+            };
+            var totalProfit = total - res[i].over_head_cost;
+            console.log("------------------------------------------------------------------------");
+            console.log("Department ID : " + res[i].department_id + " | " + "Department Name : " + res[i].department_name 
+            + " | " + "Over Head Cost : $" + res[i].over_head_cost + " | " + "Product Sales : $" + total + " | " 
+            + "Total Profit : $" + totalProfit)
+            console.log("------------------------------------------------------------------------");
+        }
+
         supervisorView();
     });
 };

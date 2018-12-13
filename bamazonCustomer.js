@@ -49,21 +49,24 @@ function selectItem() {
                         console.log("ID : " + res[i].id + " | " + "PRODUCT NAME : " + res[i].product_name + " | "
                             + "PRICE : $" + res[i].price + " | " + "IN STOCK : " + res[i].stock_quantity);
                         console.log("------------------------------------------------------------------------");
+                        
                         itemNumber = i + 1;
                         stock = res[i].stock_quantity;
                         price = res[i].price;
+                        product_sales = res[i].product_sales;
                     };
                 };
-                buyItem(itemNumber, stock, price);
+                buyItem(itemNumber, stock, price, product_sales);
             });
         });
 };
 
-function buyItem(itemNumber, stock, price) {
+function buyItem(itemNumber, stock, price, product_sales) {
     var itemNumber = itemNumber;
     var stock = stock;
     var price = price;
     var sale;
+    var product_sales = product_sales;
 
     inquirer
         .prompt([
@@ -88,7 +91,7 @@ function buyItem(itemNumber, stock, price) {
                     console.log("The total amount was $" + sale)
                     console.log("Your Order has been placed! Please wait 3 - 4 business days for arrival!");
                     console.log("------------------------------------------------------------------------");
-                    productSales(itemNumber, sale);
+                    productSales(itemNumber, sale, product_sales);
                 });
             } else {
                 console.log("------------------------------------------------------------------------");
@@ -101,9 +104,10 @@ function buyItem(itemNumber, stock, price) {
         });
 };
 
-function productSales(itemNumber, sale) {
+function productSales(itemNumber, sale, product_sales) {
     var itemNumber = itemNumber;
-    var sale = sale;
+    var sale = sale + product_sales;
+
 
     connection.query("UPDATE products SET ? WHERE ?", [{
         product_sales: sale
